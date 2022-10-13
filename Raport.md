@@ -1,6 +1,5 @@
-test test
+# Podpisy Autorów
 
-Podpisy Autorów:
-- 
-- 
+- Tytus Kołpak
 - Hubert Mosz
+- .
