@@ -1,7 +1,5 @@
 # Notatki
 
-  
-
 ## Uwagi cz1
 
 - paragraf opisu teoretycznego
@@ -24,8 +22,8 @@
 - Kto ile miał wkładu, kiedy zaczęliśmy - czy systematycznie było robione
 - Pamiętajcie, że na jednym punkcie będzie więcej niż 1 rzecz
 - [x] WSZYSTKIE REKOMENDACJE NA SPODY DZIAŁÓW
-- [ ] REKOMENDACJE ZNACZNIEJ KONKRETNE - muszą być - u nas bardzo biedne)
-- [ ] Nie duplikować jak któraś kategoria jest pusta to napisać, że w kategorii np. wcześniejszej już to jest opisane i można podciągnąć też tutaj, ale nie będziemy powtarzać
+- [x] REKOMENDACJE ZNACZNIEJ KONKRETNE - muszą być - u nas bardzo biedne)
+- [x] Nie duplikować jak któraś kategoria jest pusta to napisać, że w kategorii np. wcześniejszej już to jest opisane i można podciągnąć też tutaj, ale nie będziemy powtarzać
 
 ### Pkt1
 
@@ -141,3 +139,18 @@ mechanizmu ( o tych cookisach)
 12. Serwer side request forgery - coś o tym
 
 Na razie jest ok ale dodać to i tamto
+
+Co jeszcze sprawdzić/dodać/poprawić - docs:
+1. paragraf opisu teoretycznego
+2. wskazanie miejsca w kodzie gdzie jest podatność
+3. walidacja danych, XSS
+4. rozwiązania typu Cors
+5. konfiguracja cookiesow
+6. mechanizm autoryzacji użytkowników
+7. path traversal (23 slajd)
+8. czy są podejrzane katalogi, ocenić strukturę aplikacji / architekturę
+9. content security policy (slajd 33)
+10. hijacking (slajd 42) - konf osadzania strony w ramkach
+11. gdzie ta baza danych jest
+12. rest api? JWT?
+13. doczytac jak działa SSRF

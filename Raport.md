@@ -69,22 +69,24 @@ W audycie brane pod uwagę były podatności z listy OWASP TOP10.
 
 | Kategoria OWASP Top 10 | Przetestowane | Zgodne | Niezgodne |
 | :--------------------: | :-----------: | :----: | :-------: |
-|        A01:2021        |       -       |   -    |     -     |
-|        A02:2021        |       -       |   -    |     -     |
-|        A03:2021        |       -       |   -    |     -     |
-|        A04:2021        |       -       |   -    |     -     |
-|        A05:2021        |       -       |   -    |     -     |
-|        A06:2021        |       -       |   -    |     -     |
-|        A07:2021        |       -       |   -    |     -     |
-|        A08:2021        |       -       |   -    |     -     |
-|        A09:2021        |       -       |   -    |     -     |
-|        A10:2021        |       -       |   -    |     -     |
+|        A01:2021        |       ✔      |        |     ❌    |
+|        A02:2021        |       ✔      |        |     ❌    |
+|        A03:2021        |       ✔      |        |     ❌    |
+|        A04:2021        |       ✔      |   ✔    |           |
+|        A05:2021        |       ✔      |   ✔    |           |
+|        A06:2021        |       ✔      |        |     ❌    |
+|        A07:2021        |       ✔      |        |     ❌    |
+|        A08:2021        |       ✔      |   ✔    |           |
+|        A09:2021        |       ✔      |        |      ❌   |
+|        A10:2021        |       ✔      |        |      ❌   |
 
 ## Przegląd wyników
 
 ### A01:2021 - Broken Access Controls
 
 **Poziom ryzyka**: 4/5
+
+**Opis**: Dane logowania użytkowników zapisywane są bez algorytmów kryptograficznych, co pozwala na uzyskanie dostępu do nazw i haseł. Brak ról użytkowników oraz ich możliwości dostępowych wiąże się z niebezpieczeństwem podszywania się pod konto administratora i zmiany plików konfiguracyjnych programu.
 
 1. Każdy ma dostęp do haseł i nazw użytkownika innych użytkowników.
 
@@ -107,11 +109,23 @@ Podanie: `{{javulna_host}}/rest/movie` ,zamiast: `{{javulna_host}}/rest/movie?ti
 3. Ktoś nieautoryzowany może edytować cudze dane
 4. Podszywanie się pod administratora bez zezwolenia.
 
-**Rekomendacje**: Zastosować algorytm ARGON2, Wprowadzić role użytkowników i ich uprawnienia.
+**Rekomendacje**: 
+1. Podatność: Każdy może uzyskać dostęp do haseł i nazw użytkownika innych użytkowników.
+   1. Rozwiązanie: Zmienić lokalizację przechowywanych danych poufnych na chronioną (np. poprzez pominięcie wysłania jej do publicznego repo tak jak pomija się pliki z .gitignore). Przechowywać najważniejsze elementy - `name` i `password` w postaci zaszyfrowanej przy pomocy algorytmu ARGON2, zamiast postaci plain text.
+2. Podatność: Ktoś nieautoryzowany może edytować cudze dane.
+   1. Rozwiązanie: Jeżeli dojdzie do wypływu danych takich jak `name` i `password` to dodatkowo można zapewnić ich bezpieczeństwo poprzez dodanie 2FA - uwierzytelniania dwuskładnikowego (prośba potwierdzenia operacji zmiany danych SMSem bądź e-mailem). W ten sposób sprawi się, że one same będą niewystarczające do zmiany ich samych.
+3. Podatność: Każdy może podszyć się pod administratora bez zezwolenia
+   1. Rozwiązanie: Dodanie ról użytkowników - pozwalających na rozróżnienie, użytkowników i przydzielenie im adekwatnych pozwoleń. 
+
 
 ### A02:2021 - Cryptographic Failures
 
 **Poziom ryzyka**: 4/5
+
+**Opis**: Dane wrażliwe użytkownika, służące do obsługi konta w aplikacji, są zapisywane jako ciąg znaków podanych przez użytkownika. Zaimplementowany mechanizm ich obsługi ma liczne braki w kontekście ich zabezpieczeń, takie jak:
+- Brak mechanizmu szyfrującego hasła i danych wrażliwych
+- Brak algorytmu kryptograficznego
+- Dane użytkownika są przesyłane jawnie przez zapytanie
 
 1. Brak szyfrowania haseł
 
@@ -125,8 +139,17 @@ insert into appuser (id, name, sex, emailaddress, password, webpageurl, motto) v
 IwishIhaveChoosenTheWookieInstead:
 insert into appuser (id, name, sex, emailaddress, password, webpageurl, motto) values ('3', 'Princess Leia', 'f', 'lea@lucasarts.com', 'IwishIhaveChoosenTheWookieInstead', 'http://starwars.wikia.com/wiki/Leia_Organa_Solo', '');
 ```
+2. Nie znaleziono: Access-Control-Allow-Origin – pomimo, że jest wymagany
 
-**Rekomendacje**: Wprowadzić algorytm ARGON2
+![zdj12](p12.png)
+![zdj13](p13.png)
+![zdj14](p14.png)
+
+**Rekomendacje**: 
+1. Podatność: Brak szyfrowania haseł.
+   1. Rozwiązanie: Jak w sekcji A01, rekomendacje: punkt 1. 
+2. Podatność: Brak Access-Control-Allow-Origin
+   1. Rozwiązanie: Dodać Access-Control-Allow-Origin oraz rozważyć dodanie Access-Control-Allow-Credentials, Access-Control-Expose-Header
 
 ### 03:2021 - Injection
 
@@ -183,7 +206,9 @@ private void appendCondition(StringBuilder sb, int conditions) {
 
 1. Pobieranie zapytań do bazy danych, poprzez tworzenie zwykłych zapytań SQL’a.
 
+```
 `{{javulna_host}}/rest/movie?id=1' UNION SELECT id AS id, name AS title, password AS description, emailaddress AS genre FROM APPUSER-–`
+```
 
 ```XML
 <List>
@@ -216,26 +241,24 @@ private void appendCondition(StringBuilder sb, int conditions) {
 
 2. Tworzone zapytania SQL, są ze sobą “sklejane”, przez co są podatne na ataki.
 
+**Rekomendacje**: Do tworzenia zapytania użyć Prepared Statement - [Java JDBC](https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html).
+
 ### 04:2021 - Insecure Design (przemyśleć)
 
 **Poziom ryzyka**: 0/5
 
-Po dostępie do danych użytkowników , można zmienić hasło takiego użytkownika na dowolne nowe, a następnie przy jego użyciu zalogować się na jego konto.
+**Opis**: Niska złożoność badanej aplikacji sprawia, że punkt ten nie ma tu zastosowania. Prosta aplikacja używająca RestAPI oraz lokalną bazę danych nie posiada skomplikowanej architektury wymagającej użycia wzorców projektowych, ani architektur referencyjnych. 
 
-1. Zmiana hasła z rezultatem “OK”.
-
-![zdj3](p3.png)
-
-2. Logowanie na cudze konto przy pomocy nowego hasła.
-
-![zdj4](p4.png)
-![zdj5](p5.png)
-
-**Rekomendacje**: Zastosowanie 2FA - w postaci przykładowo wysyłania maila w momencie próby zmiany hasła, z linkiem do potwierdzenia “Tak to ja” / SMS z kodem pozwalającym na zmianę hasła “Wpisz właśnie otrzymany kod w SMS”. Przekazywanie danych w ciele zapytania, nie w parametrach.
+**Rekomendacje**:
+1. Jeśli podjęta została by decyzja o dalszym rozwoju aplikacji należałoby wprowadzać poprawki oraz weryfikować potencjalne zagrożenia.
+2. Wdrożenie procesu obejmującego zautoatyzowane skanery, przegląd kodu i testy penetracyjne
+3. Zastosowanie programu Jenkins
 
 ### A05:2021 - Security Misconfiguration
 
 **Poziom ryzyka**: 0/5 
+
+**Opis**: Program nie udostępnia publicznie plików tymczasowych ani logów. Dzięki temu osoby niepożądane nie mają do nich dostępu i nie mogą wykorzystać zawartych w nich danych. Nie znaleziono również żadnych podejrzanych katalogów.
 
 Nie znaleziono plików, które nie powinny być widoczne dla przeciętnego użytkownika, takich jak: 
 - .git
@@ -243,12 +266,15 @@ Nie znaleziono plików, które nie powinny być widoczne dla przeciętnego użyt
 - Logi
 - Tymczasowe pliki z edytorów tekstu ✔️
 
+Aplikacja dostarczona została jako kod źródłowy bez plików konfiguracyjnych, ani plików obsługujących jakiekolwiek serwery (nie ma do nich dostępu).
 
-**Rekomendacje**: :japanese_goblin:
+**Rekomendacje**: (Brak)
 
 ### A06:2021 - Vulnerable and Outdated Components
 
 **Poziom ryzyka**: 3/5
+
+**Opis:** Program nie posiada mechanizmu sprawdzania aktualności używanych bibliotek, co umożliwia exploit znanych podatności dla starszych ich wersji. Podatności dla używanych komponentów można sprawdzić np. na stronie mvnrepository.com.
 
 1. org.apache.commons > commons-collections4
 
@@ -281,49 +307,82 @@ Rys. Wersja używana w programie
 
 Rys. Aktualna wersja ze strony wydawcy
 
-Spring boot aktualizuje wersje co około pół roku i gwarantuje wsparcie przez rok od daty wydania. Dlatego należy aktualizować ten komponent co najmniej co 12 miesięcy.
-
-**Rekomendacje**: Regularne uaktualnianie wersji komponentów
+**Rekomendacje:**
+- Spring boot aktualizuje wersje co około pół roku i gwarantuje wsparcie przez rok od daty wydania. Dlatego należy aktualizować ten komponent co najmniej co 12 miesięcy.
+- Sprawdzać regularnie wersje używanych komponentów i w miarę możliwości je aktualizować.
+- Monitorować luki, które mogą pojawić się w danej wersji Spring boot'a.
 
 ### 07:2021 - Identification and Authentication Failures 
 **Poziom ryzyka**: 4/5
+
+**Opis:** Program nie posiada mechanizmu sprawdzania aktualności używanych bibliotek, co umożliwia exploit znanych podatności dla starszych ich wersji. Podatności dla używanych komponentów można sprawdzić np. na stronie mvnrepository.com.
 
 1. brak 2FA / MFA - ❌
 2. brak kont testowych admin/admin - ❌
 3. hasła są przechowywane jako plain text bez algorytmu kryptograficznego - ❌
 4. jakość haseł nie jest kontrolowana (typu wymagane: 8 liter, 1 cyfra, 1 znak specjalny  - “qwerty” jest dostępne) - ❌
-   1. przykładowo: brak 🧂solenia haseł przed haszowaniem jak w np: ARGON2
+   - przykładowo: brak 🧂solenia haseł przed haszowaniem jak w np: ARGON2
 
-**Rekomendacje**: Zastosowanie algorytmu ARGON2, Wprowadzenie mechanizmu 2FA.
+**Rekomendacje**:
+- Zastosowanie mechanizmów lub algorytmów sprawdzających/szyfrujących jednostronnie:
+    - Zastosowanie algorytmu ARGON2 lub bcrypt
+    - Wprowadzenie mechanizmu 2FA/MFA
+- Zastosowanie mechanizmów wymagających od użytkownika wprowadzenia znaków specjalnych, liczb, wielkich i małych liter oraz powtórzenia hasła przy jego tworzeniu
+- Wprowadzić mechanizm odzyskiwania hasła
+- Wproawdzic mechanizm uwierzytelniania wieloskładnikowego
+- Wprowadzić mechanizm monitorowania prób włamania (np. przez notyfikacje mailową)
 
 ### A08:2021 - Software and Data Integrity Failures 
 **Poziom ryzyka**: 1/5
+
+**Opis:** W aplikacji nie znaleziono błędów związanych z tym punktem. W przypadku dalszego rozwoju aplikacji można zastosować mechanizm aktualizacji, lecz aktualnie nie jest to konieczne, ponieważ aplikacja jest bardzo prosta.
 
 1. Wszystkie wtyczki, biblioteki i moduły pochodzą z zaufanych źródeł ✔️
 2. Brak aktualizacji ❌ (W tym przypadku nie ma aktualizacji, ale też nie są potrzebne, ponieważ strona nie jest “żywa” nic się tam nie zmienia, nie ma ruchu)
 3. Brak niebezpiecznej serializacji/deserializacji (modyfikacji danych z postaci obiektu w javie na np plik typu JSON / na odwrót) ✔️
 
-**Rekomendacje**: -
+**Rekomendacje**: 
+- W celu poprawienia bezpieczeństwa można zintegrować aplikację z narzędziem monitorującym bezpieczeństwo - często narzędzia te same potrafią podjąć decyzje i załatać lukę. 
+- Zastosowanie narzędzi do monitorowania np *SolarWinds* / *Datadog*
 
 ### A09:2021 - Security Logging & Monitoring Failures
 **Poziom ryzyka**: 4/5
 
+**Opis:** Aplikacja nie posiada żadnego mechanizmu tworzenia logów o wydarzeniach występujących w działaniu aplikacji. Przez to monitorowanie błędów jest znacznie utrudnione i po fakcie ciężko jest dotrzeć do źródła problemu.
+
 1. Brak jakiejkolwiek formy log’ów oraz wypisywania danych na temat zaistniałych eventów ❌
 2. Brak mechanizmu monitorowania błędów / awarii ❌
 
-**Rekomendacje**: Dodanie mechanizmu bezpiecznego tworzenia i przechowywania logów aplikacji - podać konkretne rozwiązania
+**Rekomendacje**: Przechowywać logi można na 2 podstawowe sposoby:
+1. W bazie danych aplikacji - co przy niewielkiej ich ilości jest najprostszym rozwiązaniem
+-  łatwość filtrowania
+- szybkość odczytu i zapisu
+- częstsze kopie zapasowe
+2. W systemie plików - jeśli zależy nam na łatwym dostępie, nawet w przypadku awarii.
+- zmniejsza to obciążenie bazy danych
+- możliwość kompresji i migracji logów (np. do prywatnej chmury)
+- można logować błędy bazy danych
+
+Przykładowym zastosowaniem komercyjnym może być AWS Cloud, który charakteryzuje się wysokim poziomem zabezpieczeń, niezawodności i wsparcia technicznego oraz niskimi kosztami (płatność subskrypcyjna za wykorzystane usługi).
+
 
 ### A10:2021 - Server-Side Request Forgery (SSRF)
 **Poziom ryzyka**: 4/5
 
+**Opis:** Podatność Server-Side Request Forgery (SSRF) pozwala osobom przeprowadzającym ataki z internetu na wykonywanie skanowania lub pobierania zasobów z sieci lokalnej. Aplikacja nie sprawdza czy pliki pobierane są ze schematów innych niż http/https. Dodatkowo nie zastosowano żadnej biblioteki do sprawdzania rozszerzenia i zawartości przesyłanych plików
+
 1. Otwarta funkcjonalność wysyłania plików bezpośrednio do folderu na serwerze ❌ 
 2. Potencjalna możliwość pobierania plików z dowolnego katalogu na serwerze ❌
 3. Aplikacja nie sprawdza poprawności adresu URL podanego przez użytkownika ❌
-Brak weryfikacji zawartości pliku ❌ 
+4. Brak weryfikacji zawartości pliku ❌ 
+5. Brak blokady localhosta (we wszystkich jego postaciach) w URL ❌
 
 ![p11](p11.png)
 
-**Rekomendacje**: Utworzenie systemu walidacji przesyłanych plików, np. przy użyciu odpowiednich bibliotek (podać jakie biblioteki)
+**Rekomendacje**: 
+- Utworzenie systemu walidacji przesyłanych plików, np. przy użyciu odpowiednich bibliotek - *JDBC* (Java DataBase Connectivity)
+- Utworzenie sysytemu walidacji schematów, z których pobierane są zasoby (zezwolić jedynie na http i https)
+- W miejscach gdzie przyjmowany ma być tylko jeden rodzaj pliku, bądź tylko wąski przedział rodzajów plikow zastosować parsowanie URL-a w celu weryfikacji jego zawartości np: *GroupDocs.Parser*
 
 ## Podsumowanie
 
