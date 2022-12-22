@@ -14,7 +14,7 @@
     - [A01:2021 - Broken Access Controls](#a012021---broken-access-controls)
     - [A02:2021 - Cryptographic Failures](#a022021---cryptographic-failures)
     - [03:2021 - Injection](#032021---injection)
-    - [04:2021 - Insecure Design (przemyśleć)](#042021---insecure-design-przemyśleć)
+    - [04:2021 - Insecure Design](#042021---insecure-design)
     - [A05:2021 - Security Misconfiguration](#a052021---security-misconfiguration)
     - [A06:2021 - Vulnerable and Outdated Components](#a062021---vulnerable-and-outdated-components)
     - [07:2021 - Identification and Authentication Failures](#072021---identification-and-authentication-failures)
@@ -22,6 +22,7 @@
     - [A09:2021 - Security Logging \& Monitoring Failures](#a092021---security-logging--monitoring-failures)
     - [A10:2021 - Server-Side Request Forgery (SSRF)](#a102021---server-side-request-forgery-ssrf)
   - [Podsumowanie](#podsumowanie)
+    - [Wykonane prace](#wykonane-prace)
 
 ## Autorzy
 
@@ -48,18 +49,18 @@ Application Security Verification Standard (ASVS) na poziomie 2 oferuje szerokie
 
 W audycie brane pod uwagę były podatności z listy OWASP TOP10.
 
-| Numer kategori |               Nazwa kategori               |
-| :------------: | :----------------------------------------: |
-|    A01:2021    |           Broken Access Control            |
-|    A02:2021    |           Cryptographic Failures           |
-|    A03:2021    |                 Injection                  |
-|    A04:2021    |              Insecure Design               |
-|    A05:2021    |         Security Misconfiguration          |
-|    A06:2021    |     Vulnerable and Outdated Components     |
-|    A07:2021    | Identification and Authentication Failures |
-|    A08:2021    |    Software and Data Integrity Failures    |
-|    A09:2021    |   Security Logging & Monitoring Failures   |
-|    A10:2021    |     Server-Side Request Forgery (SSRF)     |
+| Numer kategorii |               Nazwa kategori               |
+| :-------------: | :----------------------------------------: |
+|    A01:2021     |           Broken Access Control            |
+|    A02:2021     |           Cryptographic Failures           |
+|    A03:2021     |                 Injection                  |
+|    A04:2021     |              Insecure Design               |
+|    A05:2021     |         Security Misconfiguration          |
+|    A06:2021     |     Vulnerable and Outdated Components     |
+|    A07:2021     | Identification and Authentication Failures |
+|    A08:2021     |    Software and Data Integrity Failures    |
+|    A09:2021     |   Security Logging & Monitoring Failures   |
+|    A10:2021     |     Server-Side Request Forgery (SSRF)     |
 
 ### Aplikacja
 
@@ -69,16 +70,16 @@ W audycie brane pod uwagę były podatności z listy OWASP TOP10.
 
 | Kategoria OWASP Top 10 | Przetestowane | Zgodne | Niezgodne |
 | :--------------------: | :-----------: | :----: | :-------: |
-|        A01:2021        |       ✔      |        |     ❌    |
-|        A02:2021        |       ✔      |        |     ❌    |
-|        A03:2021        |       ✔      |        |     ❌    |
-|        A04:2021        |       ✔      |   ✔    |           |
-|        A05:2021        |       ✔      |   ✔    |           |
-|        A06:2021        |       ✔      |        |     ❌    |
-|        A07:2021        |       ✔      |        |     ❌    |
-|        A08:2021        |       ✔      |   ✔    |           |
-|        A09:2021        |       ✔      |        |      ❌   |
-|        A10:2021        |       ✔      |        |      ❌   |
+|        A01:2021        |       ✔       |        |     ❌     |
+|        A02:2021        |       ✔       |        |     ❌     |
+|        A03:2021        |       ✔       |        |     ❌     |
+|        A04:2021        |       ✔       |   ✔    |           |
+|        A05:2021        |       ✔       |   ✔    |           |
+|        A06:2021        |       ✔       |        |     ❌     |
+|        A07:2021        |       ✔       |        |     ❌     |
+|        A08:2021        |       ✔       |   ✔    |           |
+|        A09:2021        |       ✔       |        |     ❌     |
+|        A10:2021        |       ✔       |        |     ❌     |
 
 ## Przegląd wyników
 
@@ -116,6 +117,8 @@ Podanie: `{{javulna_host}}/rest/movie` ,zamiast: `{{javulna_host}}/rest/movie?ti
    1. Rozwiązanie: Jeżeli dojdzie do wypływu danych takich jak `name` i `password` to dodatkowo można zapewnić ich bezpieczeństwo poprzez dodanie 2FA - uwierzytelniania dwuskładnikowego (prośba potwierdzenia operacji zmiany danych SMSem bądź e-mailem). W ten sposób sprawi się, że one same będą niewystarczające do zmiany ich samych.
 3. Podatność: Każdy może podszyć się pod administratora bez zezwolenia
    1. Rozwiązanie: Dodanie ról użytkowników - pozwalających na rozróżnienie, użytkowników i przydzielenie im adekwatnych pozwoleń. 
+4. Podatność: XSS.
+   1. Rozwiązanie: Wprowadzić filtrowanie tagów html'owych w linkach. Sprawdzać przesyłane dane przez użytkowników.
 
 
 ### A02:2021 - Cryptographic Failures
@@ -154,6 +157,8 @@ insert into appuser (id, name, sex, emailaddress, password, webpageurl, motto) v
 ### 03:2021 - Injection
 
 **Poziom ryzyka**: 5/5
+
+**Opis**: Jest to podatność polegająca na niedostatecznym filtrowaniu i sprawdzaniu danych podanych przez użytkownika, które następnie są wykorzystywane do tworzenia zapytania SQL'owego. Aplikacja nie wykorzystuje żadnych frameworków do obrony przed szkodliwymi ciągami znaków (jak np. 'OR 1=1' lub 'DROP TABLE'), co stwarza duże niebezpieczeństwo wycieku danych lub ich destrukcji.
 
 ```Java
 public List<MovieDto> findMovie(String title, String description, String genre, String id) {
@@ -243,7 +248,7 @@ private void appendCondition(StringBuilder sb, int conditions) {
 
 **Rekomendacje**: Do tworzenia zapytania użyć Prepared Statement - [Java JDBC](https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html).
 
-### 04:2021 - Insecure Design (przemyśleć)
+### 04:2021 - Insecure Design
 
 **Poziom ryzyka**: 0/5
 
@@ -256,7 +261,7 @@ private void appendCondition(StringBuilder sb, int conditions) {
 
 ### A05:2021 - Security Misconfiguration
 
-**Poziom ryzyka**: 0/5 
+**Poziom ryzyka**: 1/5 
 
 **Opis**: Program nie udostępnia publicznie plików tymczasowych ani logów. Dzięki temu osoby niepożądane nie mają do nich dostępu i nie mogą wykorzystać zawartych w nich danych. Nie znaleziono również żadnych podejrzanych katalogów.
 
@@ -264,11 +269,14 @@ Nie znaleziono plików, które nie powinny być widoczne dla przeciętnego użyt
 - .git
 - Backupy
 - Logi
-- Tymczasowe pliki z edytorów tekstu ✔️
+- Tymczasowe pliki z edytorów tekstu
 
-Aplikacja dostarczona została jako kod źródłowy bez plików konfiguracyjnych, ani plików obsługujących jakiekolwiek serwery (nie ma do nich dostępu).
+Aplikacja dostarczona została jako kod źródłowy bez plików konfiguracyjnych, ani plików obsługujących jakiekolwiek serwery (nie ma do nich dostępu). 
+Uruchamianie aplikacji polega na wystartowaniu Apache Tomcat - kontenera aplikacji jako serwer w domyślnej konfiguracji (np. polegającej na wybranym porcie (8080)). Web Application Firewall (WAF) nie jest wprowadzony.
 
-**Rekomendacje**: (Brak)
+**Co to jest WAF?** WAF może być wirtualnym lub fizycznym urządzeniem, które zapobiega wykorzystywaniu luk w aplikacjach internetowych. Luki te mogą wynikać z tego, że sama aplikacja jest przestarzała lub nie została odpowiednio zakodowana w momencie tworzenia. WAF rozwiązuje te niedociągnięcia w kodzie, stosując specjalne konfiguracje zestawów reguł, znanych również jako polityki bezpieczeństwa.
+
+**Rekomendacje**: Wprowadzić firewall np poprzez *Akamai Kona Site Defender*, bądź *AWS WAF*
 
 ### A06:2021 - Vulnerable and Outdated Components
 
@@ -369,7 +377,7 @@ Przykładowym zastosowaniem komercyjnym może być AWS Cloud, który charakteryz
 ### A10:2021 - Server-Side Request Forgery (SSRF)
 **Poziom ryzyka**: 4/5
 
-**Opis:** Podatność Server-Side Request Forgery (SSRF) pozwala osobom przeprowadzającym ataki z internetu na wykonywanie skanowania lub pobierania zasobów z sieci lokalnej. Aplikacja nie sprawdza czy pliki pobierane są ze schematów innych niż http/https. Dodatkowo nie zastosowano żadnej biblioteki do sprawdzania rozszerzenia i zawartości przesyłanych plików
+**Opis:** Podatność Server-Side Request Forgery (SSRF) pozwala osobom przeprowadzającym ataki z internetu na wykonywanie skanowania lub pobierania zasobów z sieci lokalnej. Aplikacja nie sprawdza czy pliki pobierane są ze schematów innych niż http/https. Dodatkowo nie zastosowano żadnej biblioteki do sprawdzania rozszerzenia i zawartości przesyłanych plików. (np tam gdzie pole zakłada przyjęcie zdjęcia, nie ma weryfikacji, czy plik jest rzeczywiście zdjęciem - jeżeli nie to jedynie nie zostanie on poprawnie wyświetlony, zamiast zostać zablokowany / nie zostać w ogóle przyjęty)
 
 1. Otwarta funkcjonalność wysyłania plików bezpośrednio do folderu na serwerze ❌ 
 2. Potencjalna możliwość pobierania plików z dowolnego katalogu na serwerze ❌
@@ -380,10 +388,55 @@ Przykładowym zastosowaniem komercyjnym może być AWS Cloud, który charakteryz
 ![p11](p11.png)
 
 **Rekomendacje**: 
-- Utworzenie systemu walidacji przesyłanych plików, np. przy użyciu odpowiednich bibliotek - *JDBC* (Java DataBase Connectivity)
+- Utworzenie systemu walidacji przesyłanych plików, np. przy użyciu odpowiednich bibliotek takich jak *JDBC* (Java DataBase Connectivity)
 - Utworzenie sysytemu walidacji schematów, z których pobierane są zasoby (zezwolić jedynie na http i https)
-- W miejscach gdzie przyjmowany ma być tylko jeden rodzaj pliku, bądź tylko wąski przedział rodzajów plikow zastosować parsowanie URL-a w celu weryfikacji jego zawartości np: *GroupDocs.Parser*
+- W miejscach gdzie przyjmowany ma być tylko jeden rodzaj pliku, bądź tylko wąski przedział rodzajów plikow zastosować parsowanie URL-a w celu weryfikacji jego zawartości przy pomocy np: *GroupDocs.Parser*
 
 ## Podsumowanie
 
 Audyt aplikacji “Javulna” realizowany był na podstawie 10 najistotniejszych ryzyk odnośnie bezpieczeństwa, wyznaczonych przez organizację OWASP (The Open Web Application Security Project) i ich listy [TOP10](https://owasp.org/www-project-top-ten/).
+
+---
+
+### Wykonane prace
+
+| Kategoria  |        Fragment raportu        | Tytus Kołpak | Łukasz Marcjan | Hubert Mosz |
+| :--------: | :----------------------------: | :----------: | :------------: | :---------: |
+| **Ogólne** |    Stowrzenie dokumentu md     |      ✔       |                |             |
+|            |    Utworzenie spisu treści     |      ✔       |                |             |
+|            |       Cel i zakres badań       |      ✔       |       ✔        |      ✔      |
+|            |         Zakres audytu          |      ✔       |       ✔        |      ✔      |
+|            |     Informacje o aplikacji     |      ✔       |       ✔        |      ✔      |
+|            | Tabela testowanych komponentów |      ✔       |                |             |
+|  **A01**   |              Opis              |      ✔       |       ✔        |      ✔      |
+|            |             Treść              |      ✔       |       ✔        |      ✔      |
+|            |          Rekomendacje          |      ✔       |                |      ✔      |
+|  **A02**   |              Opis              |              |                |      ✔      |
+|            |             Treść              |      ✔       |       ✔        |             |
+|            |          Rekomendacje          |      ✔       |                |             |
+|  **A03**   |              Opis              |              |       ✔        |             |
+|            |             Treść              |              |       ✔        |      ✔      |
+|            |          Rekomendacje          |              |       ✔        |             |
+|  **A04**   |              Opis              |              |                |      ✔      |
+|            |             Treść              |              |                |             |
+|            |          Rekomendacje          |              |                |      ✔      |
+|  **A05**   |              Opis              |      ✔       |                |             |
+|            |             Treść              |      ✔       |                |             |
+|            |          Rekomendacje          |      ✔       |       ✔        |             |
+|  **A06**   |              Opis              |              |                |      ✔      |
+|            |             Treść              |              |                |      ✔      |
+|            |          Rekomendacje          |              |                |      ✔      |
+|  **A07**   |              Opis              |              |       ✔        |             |
+|            |             Treść              |      ✔       |                |      ✔      |
+|            |          Rekomendacje          |      ✔       |       ✔        |             |
+|  **A08**   |              Opis              |              |                |      ✔      |
+|            |             Treść              |      ✔       |       ✔        |             |
+|            |          Rekomendacje          |      ✔       |                |             |
+|  **A09**   |              Opis              |              |                |      ✔      |
+|            |             Treść              |              |       ✔        |             |
+|            |          Rekomendacje          |              |                |      ✔      |
+|  **A10**   |              Opis              |      ✔       |       ✔        |             |
+|            |             Treść              |      ✔       |                |             |
+|            |          Rekomendacje          |      ✔       |       ✔        |             |
+| **Ogólne** |          Podsumowanie          |      ✔       |       ✔        |      ✔      |
+|            |     Tabela wykonanych prac     |      ✔       |                |      ✔      |

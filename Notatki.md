@@ -29,66 +29,64 @@
 
 problem: dobry
 
-Uwaga: zmienić rekomendacje - Dać na dół (po prostu, żeby kolejność się zgadzała XD)
+- [x] Uwaga: zmienić rekomendacje - Dać na dół (po prostu, żeby kolejność się zgadzała XD)
 kluzca... czyli np RSA
 
-Rekomendacje do pojedynczego punktu a nie do kategorii
+- [x] Rekomendacje do pojedynczego punktu a nie do kategorii
 
-Per punkt: zastosować ARGON (zamiast zastosować szyfrowanie) (MA BYĆ MOCNO
+- [x] Per punkt: zastosować ARGON (zamiast zastosować szyfrowanie) (MA BYĆ MOCNO
 
 KONKRETNIE - całkiem konkretnie)
 
 ### Pkt2
 
-SHA-256 kiepski na hasło nie jest odporny na brute force (zmienić na BCrypt albo też
+- [x] SHA-256 kiepski na hasło nie jest odporny na brute force (zmienić na BCrypt albo też
 
 ARGON2)
 
 ### Pkt3
 
-Należy wykorzystać Prepared statement do mechanizmów SQLowych
+- [x] Należy wykorzystać Prepared statement do mechanizmów SQLowych
 
 to jest mechanizm który filtruje niebezpieczne coś tam i jest odporny na sql injection
 
 ### Pkt4
 
-2FA to nie jest tu rozwiązanie (to ok ale jako osobny punkt)
-
-Sam brak faktu 2Fa nie jest nagannych ale by poprawiał - czyli dać fajkę, jest ok
+- [x] Sam brak faktu 2Fa nie jest nagannych ale by poprawiał - czyli dać fajkę, jest ok
 
 czyli zielona fajeczka i jest ok
 
-Można pozbyć sie tego jako błędu
+- [x] Można pozbyć sie tego jako błędu
 
 ### Pkt5
 
-czy logi backup są w repo - nie ma to zielona fajeczka
+- [x] czy logi backup są w repo - nie ma to zielona fajeczka
 
-czy w .gitignore są pliki a propos dockera
+- [x] czy w .gitignore są pliki a propos dockera (brak gitignore)
 
-ZOSTAWMY TAK JAK JEST JEST W PORZĄDKU
+- [x] ZOSTAWMY TAK JAK JEST JEST W PORZĄDKU
 
-ale zaznaczyć, że aplikacja była dostarczona jako kody źródłowe aplikacji, be plików
+- [x] ale zaznaczyć, że aplikacja była dostarczona jako kody źródłowe aplikacji, be plików
 
 konfiguracyjnych, serwera bazodanowego ,serwera http itp - nie było dostępu nie można
 
 było sprawdzić
 
-konfiguracja bazy danych
+- [ ] konfiguracja bazy danych
 
-konfiguracja systemu - np firewall
+- [X] konfiguracja systemu - np firewall
 
 WIĘC GIT - opisać
 
-konfiguracja systemu aplikacji - tomcat
+- [X] konfiguracja systemu aplikacji - tomcat
 
 ALE: Tomcata mamy, więc wypadałoby sprawdzić konfiguracje
 
 ### Pkt6
 
-Bardzo dobrze, że je wypisaliśmy to na duży plus (o vunerabilities)
+- [x] Bardzo dobrze, że je wypisaliśmy to na duży plus (o vunerabilities)
 
--można sprawdzić czy na githubie są jakieś kody do eksploitacji
+- [x] można sprawdzić czy na githubie są jakieś kody do eksploitacji (nie ma latwo dostepnych)
 
 (wskazać że /czy są skrypty do eksploitacji takiej starej aplikacji na tym githubie) tyle
 
@@ -96,36 +94,36 @@ wystarczy
 
 ### Pkt7
 
-Tutaj dobrze, że jest napisany jest ARGON2
+- [x] Tutaj dobrze, że jest napisany jest ARGON2
 
 (nie ma sensu dublować (tam gdzie brakowało algorytmu chyba pkt2 ))
 
-czyli ok
+- [x] czyli ok
 
 ### Pkt8
 
-OK
+- [x] OK
 
-Raczej bym dodał, że dobrze by było ją zintegrować z narzędziami monitorującymi
+- [x] Raczej bym dodał, że dobrze by było ją zintegrować z narzędziami monitorującymi
 
 bezpieczeństwo - one nie są wymagane a le znacznie by poprawiło to bezpieczeństwo
 
 ### Pkt9
 
-OOOOO jak nie ma logów to zdecydowanie niebezpieczne podnieść ryzyko na 4/5
+- [x] OOOOO jak nie ma logów to zdecydowanie niebezpieczne podnieść ryzyko na 4/5
 
 ### Pkt10
 
-Trochę jaśniej opisać
+- [x] Trochę jaśniej opisać
 
 TO co jest opisane tutaj to jest path traversal
 
-Podać jakich bibliotek
+- [x] Podać jakich bibliotek
 
 UWAGI na koniec
 
 1. Tak czy siak do każdego punktu po paragrafie opisu teoretycznego
-2. Jeżeli możemy wskazać w kodzie gdzie jest taka podatność - to podać "Podatnośćznaleziona tu ti tu"
+2. Jeżeli możemy wskazać w kodzie gdzie jest taka podatność - to podać "Podatnośćznaleziona tu i tu"
 3. Walidacja danych crosside scripting - o tym nic nie znalazł - poszukać XSS
 4. Czy są rozwiązania typu CORS
 5. Napisać o konfiguracji cookisów
@@ -145,12 +143,12 @@ Co jeszcze sprawdzić/dodać/poprawić - docs:
 2. wskazanie miejsca w kodzie gdzie jest podatność
 3. walidacja danych, XSS
 4. rozwiązania typu Cors
-5. konfiguracja cookiesow
+5. konfiguracja cookiesow - [ ]
 6. mechanizm autoryzacji użytkowników
 7. path traversal (23 slajd)
 8. czy są podejrzane katalogi, ocenić strukturę aplikacji / architekturę
 9. content security policy (slajd 33)
 10. hijacking (slajd 42) - konf osadzania strony w ramkach
-11. gdzie ta baza danych jest
+11. gdzie ta baza danych jest (nie ma :D)
 12. rest api? JWT?
 13. doczytac jak działa SSRF
