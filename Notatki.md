@@ -152,3 +152,66 @@ Co jeszcze sprawdzić/dodać/poprawić - docs:
 11. gdzie ta baza danych jest (nie ma :D)
 12. rest api? JWT?
 13. doczytac jak działa SSRF
+
+## Finalizacja
+
+**05.01.2023**
+
+//można więcej wycinków kodu z nazwą plku z którego pochodzi
+
+Brakuje tylko:
+PODSUMOWANIE - brakowałoby
+:ocenili jak ta aplikacja: Jak bardzo jest źle (na początku raportu) 
+jaka jest sumaryczna powaga kwestii - zsumować np 73% ryzyka
+
+~~zaliczeie : każdmy mówi co kto zrobił - czym się zajmował~~
+
+~~po jednym pytanku kontrolnym~~
+
+~~w jaki sposób wykonywaliśmy audyt~~
+
+~~jaka aplikacja w której wersji jak wyglądało wdrożenie~~
+
+~~Jaka technologia - jaka wersja javy itp jaka wersja springa itp~~
+
+te flagi o co z nimi chodzi
+
+przyjrzeć jak jest tworzony identyfikator sesji - session id (czy nie jest tworzony na podstawie jakichś stałych danych - czy nie jest kiepski cryptographic aproach)
+
+można ukryć aplikacje z serwerem typuc apache, ograniczyć ilość zapytań, mieć logi
+
+~~w 6 zdanie wstępu: aplikcaja oparta o maven, plik konfiguracyjny to mvn.xml (i porszę zobaczyć) coś takiego~~
+
+~~cwe też ma swój poziom ryzyka~~
+
+~~/w pkt 7 rozdzielić admin/admin - dokładniej opsiać brak kont testowwych to dobrz, ale źle ,że admin nie ma extra uprawnien~~
+
+~~w pkt 8 więcej opisu czym się zajmuje sam punkt - pkt 8 zajmuje sie bla bla bla (nie związane z aplikacją)~~
+
+~~10 - nie do końca ssrf bardziej insecure design~~
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+COś więcej o strukturze i architekturze aplikacji
+Specjalny pkt: Architektura aplikacji - jak w tych dostarczonych raportach
+
+Notatki bezpieczeństwo:
+Do wstępu
+- ~~Napisać gdzie jest ten lub skrin z kodu~~
+- ~~Na początku dać podsumowanie, "jak jest źle"~~
+- ~~Np. wyrkesy, jak jest źle numerycznie, wykres z poziomu ryzyka~~
+- ~~Tekstowo i wizualnie~~
+- ~~Jak testowalaliśmy alpikacje~~
+- ~~~Jak dostarczana jest aplikacja~~
+- ~~Jaka jest technologia - technikalia~~
+- ~~Napisać że springa~~
+
+Do poprawy
+- Sprawdzić, czy są wszędzie http, czy https                        NIE
+- Odwołanie http only, do czego jest wykorzystywany user-auth...    NIE
+- Czy identyfikator sesji nie jest stały                            NIE
+- ~~A05 - ukryć za apaczem ~~
+//- Opis do tego co jest w A08 - co tam można zamieścić
+- ~~Chyba nie ma SSRF - przesyłanie pliku, a nie przesyłanie danych przez serwer A10 - bardziej podchodzi pod Insecure Disign✔️ DONE~~
+- ~~Struktura aplikacji nie jest opisana, jakie są endpointy jak to wyglącu - Opisać Architekture~~
