@@ -53,7 +53,7 @@ Ogólny poziom bezpieczeństwa można określić jako średnio-wysoki, a aplikac
 |        A10:2021        |      0/5      |
 |      Sumarycznie       |     30/50     |
 
-![p15](zdj15.png)
+![p15](p15.png)
 
 ## Cel i zakres badań
 
